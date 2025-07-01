@@ -1,0 +1,20 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "backend for Quizar",
+  "license": "ISC",
+  "author": "Alok",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "start",
+    "dev":"nodemon index.js"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "mongoose": "^8.16.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10"
+  }
+}
