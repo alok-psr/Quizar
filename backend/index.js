@@ -23,13 +23,32 @@ const io = new Server(httpServer, {
     }
 })
 
+const questions = []
+
+// it takes in array of wrong options and a correct option and returns a randomized array of options and ans index in object
+function getOpt(cor,wro){
+    let randInd = Math.floor(Math.random()*4)
+
+    if (randInd >= 3){
+        const options = wro.concat(cor)
+        return {options:options ,ans:randInd} 
+
+    }else {
+        let temp = wro[randInd]
+        wro[randInd]= cor
+        const options = wro.concat(temp)
+        
+        return {options:options ,ans:randInd} 
+    }
+    // {options : [optionA,OptionB ,...] : ans : int [index of ans in the options]
+}
+// the above fn getOpt used in socket.on('game-start') to get options and ans index from give args
 
 
-const rooms = {} // should have the following data ::{roomCode : {id:socket.id of player, player: playername, isAdmin: true if the player was the host, inGame: if in a game set True else false}} hence 3 vars roomCode,player name , socket.id
-
+const rooms = {} // should have the following data ::{roomCode :[ {id:socket.id of player, player: playername, isAdmin: true if the player was the host, inGame: if in a game set True else false}] } hence 3 vars roomCode,player name , socket.id
+// rooms[room] is an array of all data of the players in a room ..in obj form ie ... rooms[room]===[{player1},{player2}.....]
+// playerData ==  { .id , .player , isAdmin , inGame , gamePoints}
 io.on('connection',(socket)=>{
-    console.log("all the conenctions' id are :  "  )
-    console.log(Array.from(io.sockets.sockets.keys()))
     console.log('--------------------')
 
 
@@ -49,7 +68,7 @@ io.on('connection',(socket)=>{
             isAdmin,
             inGame:false
         });
-        socket.name= player
+        socket.name = player
         socket.isAdmin=isAdmin
         socket.inGame = false
 
@@ -59,8 +78,7 @@ io.on('connection',(socket)=>{
         // update room and send the updated rooms[room] to every player within
         io.to(room).emit('room-update', rooms[room]);
 
-        console.log('create-rooms \n -------------')
-        console.log(`${rooms} \n -----------------`)
+        console.log('room-created \n -------------')
     })
 
 
@@ -83,28 +101,31 @@ io.on('connection',(socket)=>{
             id:socket.id,
             name:player,
             isAdmin,
-            inGAme:false
+            inGame:false
         })
 
         // update room and send the updated rooms[room] to every player within
         io.to(room).emit('room-update', rooms[room]);
 
-        console.log('join-rooms \n ------------- ')
-        console.log(rooms)
-        console.log(socket.name)
+        console.log(` ${socket.name} -- room-joined \n ------------- `)
     })
+
+
 
     socket.on('leave-room', (room) => {
         socket.leave(room, () => console.log('bye !!'));
 
         if (rooms[room]) {
-            // remove the player from the rooms[room] 
+            // remove the player from the rooms[room]
+            
+            
             rooms[room] = rooms[room].filter(player => player.id !== socket.id);
-
+            console.log(` ${socket.name} left room \n----------------`)
             // delete the room if empty
             if (rooms[room].length === 0) {
                 delete rooms[room];
             }
+
         }
         // since the player left he cant be the admin
         socket.isAdmin=false
@@ -127,18 +148,86 @@ io.on('connection',(socket)=>{
         });
 
     // socket on for start-game
-    socket.on('start-game',(room)=>{
+    socket.on('start-game',async (room)=>{
         if (!rooms[room]){
             rooms[room]=[]
         }
 
+        console.log('game started')
+
         // set inGame true for everyone in the room 
         rooms[room].forEach(e => {
             e['inGame']=true
+            console.log(`${e.name} is in game ...`)
         });
-        io.to(room).emit('game-started',rooms[room])
 
+
+        // getting ques 
+        const res =await fetch('https://opentdb.com/api.php?amount=5&type=multiple')
+        const questions = await res.json()
+        const quesRes=questions['results'] 
+        
+        console.log(`Questions attained!!!`)
+        
+        const quesArr= quesRes.map(q=>{
+
+            const fnOut = getOpt(q.correct_answer,q.incorrect_answers)
+            const options = fnOut['options']
+            const ansInd = fnOut['ans']
+
+            return {text: q['question'],options:options , correct :ansInd}
+        })        
+
+        io.to(room).emit('game-started',rooms[room],quesArr)
+      
     })
+
+    socket.on('game-end',(room,cor,wro)=>{
+        if (!rooms[room]){
+            rooms[room]=[]
+        }
+
+        console.log(`game ended for ${socket.name}`)
+
+        rooms[room].forEach((e)=>{
+            socket.gamePoints = cor
+            if (e.id==socket.id){
+                e['gamePoints']=cor
+                e['inGame']=false
+                socket.inGame=false
+
+            }
+        })
+        const ranks = getRankings(room) //ranks is array of obj :: [{name, pos (starts from 0)}]
+        console.log(`${ranks} ranking till now`)
+            
+        // .every(condition) returns true when condition is true for every elemtnt of the array
+        if (rooms[room].every(e=>e['inGame']==false)){
+            console.log('triggered')
+            io.to(room).emit('game-over',ranks)
+        }
+        
+    })
+
+    // will be used in socket.on(game-end)
+    function getRankings(room){
+        if (!rooms[room]){
+            rooms[room]=[]
+        }
+        
+        const sorted = [...rooms[room]].sort((a, b) => (b.gamePoints || 0) - (a.gamePoints || 0));
+
+        console.log('sorted array....',sorted.map((player,i)=>({
+            name:player.name,
+            pos:i,
+            score:player.gamePoints
+        })))
+        return sorted.map((player,i)=>({
+            name:player.name,
+            pos:i,
+        }))
+    }
+
 })
 
 app.get('/',(req,res)=>{

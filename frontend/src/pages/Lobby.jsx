@@ -17,21 +17,17 @@ function Lobby() {
   const location = useLocation(); // cool trick
   const { roomCode, playerName } = location.state || {};
   const [players, setPlayers] = useState([]);
-  const [isAdmin,setIsAdmin] = useState(false)
-
-
-
-  
+  const [isAdmin,setIsAdmin] = useState(false)  
 
   useEffect(() => {
     if (!playerName || !roomCode) {
       navigate('/');
     }
-    socket.on('game-started',roomData=>{
+    socket.on('game-started',(roomData,quesArr)=>{
       roomData.forEach(e=>{
         if (e.id==socket.id ){
           if (e.inGame == true){
-            navigate('/game', { state: { roomCode, playerName } });
+            navigate('/game', { state: { roomCode, playerName, quesArr } });
           }
         }
       })
@@ -54,11 +50,11 @@ function Lobby() {
 
 
   const handleStartGame = () => {
-    navigate('/game')
-    // sets the inGame property to true and emits game-started from the server
     socket.emit('start-game',roomCode)
-    
-    
+    socket.on('game-started',(rd,quesArr)=>{
+      navigate('/game', { state: { roomCode, playerName, quesArr } });
+    })
+    // sets the inGame property to true and emits game-started from the server
   };
 
   const handleLeave = () => {
