@@ -161,7 +161,7 @@ io.on('connection',(socket)=>{
         // set inGame true for everyone in the room 
         rooms[room].forEach(e => {
             e['inGame']=true
-            console.log(`${e.name} is in game ...`)
+            console.log(`${e.name} is in game ... \n --------------`)
         });
 
 
@@ -170,7 +170,7 @@ io.on('connection',(socket)=>{
         const questions = await res.json()
         const quesRes=questions['results'] 
         
-        console.log(`Questions attained!!!`)
+        console.log(`Questions attained!!! \n ----------------`)
         
         const quesArr= quesRes.map(q=>{
 
@@ -190,7 +190,7 @@ io.on('connection',(socket)=>{
             rooms[room]=[]
         }
 
-        console.log(`game ended for ${socket.name}`)
+        console.log(`game ended for ${socket.name} \n ---------------`)
 
         rooms[room].forEach((e)=>{
             socket.gamePoints = cor
@@ -202,11 +202,9 @@ io.on('connection',(socket)=>{
             }
         })
         const ranks = getRankings(room) //ranks is array of obj :: [{name, pos (starts from 0)}]
-        console.log(`${ranks} ranking till now`)
             
         // .every(condition) returns true when condition is true for every elemtnt of the array
         if (rooms[room].every(e=>e['inGame']==false)){
-            console.log('triggered')
             io.to(room).emit('game-over',ranks)
         }
         
@@ -220,11 +218,11 @@ io.on('connection',(socket)=>{
         
         const sorted = [...rooms[room]].sort((a, b) => (b.gamePoints || 0) - (a.gamePoints || 0));
 
-        console.log('sorted array....',sorted.map((player,i)=>({
+        console.log('ranking object:: \n',sorted.map((player,i)=>({
             name:player.name,
             pos:i,
             score:player.gamePoints
-        })))
+        })),'\n------------------')
         return sorted.map((player,i)=>({
             name:player.name,
             pos:i,
