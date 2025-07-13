@@ -2,6 +2,10 @@
 
 Quizar is a real-time multiplayer quiz game built with React, Node.js, Express, and Socket.IO. Players can create or join quiz rooms, compete in answering questions, and see live rankings at the end of each game.
 
+[play the game here](https://quizar-ten.vercel.app/)
+
+[backend here](https://quizar.onrender.com)
+
 ---
 
 ## Features
@@ -69,6 +73,7 @@ Quizar is a real-time multiplayer quiz game built with React, Node.js, Express, 
 
 ### Project Structure
 
+```
 Quizar/
 ├── backend/
 │   ├── index.js
@@ -78,9 +83,9 @@ Quizar/
 │   │   ├── pages/
 │   │   ├── sockets/
 │   │   └── App.jsx
-│   └── ...other frontend files
-└── [README.md](http://_vscodecontentref_/0)
-
+│   └── ...other frontend files  
+└── [README.md]
+```
 ### Technologies Used
  - React
  - Vite
