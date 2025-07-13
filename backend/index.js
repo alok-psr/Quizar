@@ -15,13 +15,13 @@ app.use(express.json())
 const httpServer= createServer(app)
 
 httpServer.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
+  console.log(`Server running on ${PORT}`);
 });
 
 // socket logic
 const io = new Server(httpServer, {
     cors:{
-        origin:['http://localhost:5173'], // change once the frontend is deployed
+        origin:[process.env.FRONTEND_URL], // change once the frontend is deployed
         methods:['GET','POST']
     }
 })
