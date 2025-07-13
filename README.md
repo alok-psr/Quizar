@@ -57,7 +57,7 @@ Quizar is a real-time multiplayer quiz game built with React, Node.js, Express, 
     create ./backend/.env -> ```PORT=8080```
     ```FRONTEND_URL=http://localhost:5173```
 
-    create ./frontend/.env -> ```VITE_BACKEND_SERVER=http://localhost:8080
+    create ./frontend/.env -> ```VITE_BACKEND_SERVER=http://localhost:8080```
 
 ### Running the App
 
