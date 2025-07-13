@@ -23,7 +23,7 @@ function Game() {
     if (!roomCode || !playerName) {
       navigate('/');
     }
-    fetch("https://quizar.onrender.com/health").then(() => console.log("🟢 Backend is up!")).catch(() => alert("🔴 Server is down. Try again later."));
+    fetch("https://quizar.onrender.com/health").then(() => console.log("🟢 Backend is up!")).catch((err) => console.log(err));
 
   }, [roomCode, playerName, navigate]);
 
