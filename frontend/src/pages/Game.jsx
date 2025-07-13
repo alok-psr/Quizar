@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import PlayerList from '../components/PlayerList';
 import socket from '../sockets/socket.js'
 
 
@@ -61,7 +60,6 @@ function Game() {
     if (index === question.correct) {
       alert('Correct!');
       setCorrect(correct+1)
-      
 
       if (currentIndex < totQues) {
         setCurrentIndex(currentIndex + 1);
@@ -122,7 +120,6 @@ function Game() {
         <div className="grid grid-cols-2 gap-4">
           {question.options.map((option, index) => (
             <button
-              key={index}
               onClick={() => handleAnswer(index)}
               className={`px-4 py-2 rounded-lg transition-all duration-200 bg-indigo-500 hover:bg-indigo-600`}>{option}</button>
           ))}

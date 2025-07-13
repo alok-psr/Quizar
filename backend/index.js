@@ -1,8 +1,11 @@
 import express, { urlencoded } from 'express'
 import { Server } from 'socket.io'
 import {createServer} from 'http'
+import dotenv from 'dotenv'
 
-const PORT = 8080
+dotenv.config()
+
+const PORT = process.env.PORT
 
 
 const app = express()
@@ -18,7 +21,7 @@ httpServer.listen(PORT, () => {
 // socket logic
 const io = new Server(httpServer, {
     cors:{
-        origin:['http://localhost:5173'],
+        origin:['http://localhost:5173'], // change once the frontend is deployed
         methods:['GET','POST']
     }
 })

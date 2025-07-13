@@ -1,7 +1,13 @@
 import {io} from 'socket.io-client'
+import dotenv from 'dotenv'
+dotenv.config({path:'../.env'})
 
-const socket = io('http://localhost:8080',{
-    autoConnect:false
+const backend_server = process.env.BACKEND_SERVER
+
+const socket = io(backend_server,{
+    autoConnect:false,
+    withCredentials: true,
+    transports: ['websocket'],
 })
 
 export default socket

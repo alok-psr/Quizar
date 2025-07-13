@@ -9,7 +9,6 @@ function Home() {
   const [roomCode, setRoomCode] = useState('');
   const [playerName, setPlayerName] = useState('');
   const navigate = useNavigate();
-
   
 
   const handleJoin = (e) => {
@@ -43,8 +42,6 @@ function Home() {
 
   return (
     <div className='w-lvw h-lvh flex justify-center items-center py-20'>
-      
-      
 
       <form className='flex flex-col gap-4 bg-slate-700 w-2/3 rounded-lg p-8 justify-center items-center'>
         <input
