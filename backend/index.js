@@ -237,3 +237,7 @@ app.get('/',(req,res)=>{
     res.json({msg:'Running !!!',name:'alok'})
 })
 
+app.get('/health',(req,res)=>{
+    res.send('backend is live')
+})
+
