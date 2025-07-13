@@ -7,9 +7,7 @@ import GameOver from './pages/GameOver.jsx';
 
 export default function App() {
   return (
-    
-    
-      
+
       <Routes>
         
         <Route path="/" element={<Home />} />

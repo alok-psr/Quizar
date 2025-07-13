@@ -9,34 +9,22 @@ function Game() {
   const navigate = useNavigate();
   const { roomCode, playerName, quesArr } = location.state || {};
 
-
-  // Proxy Qustion till server sends the actual questoins
-
   const [currentIndex, setCurrentIndex] = useState(0);
   const [question, setQuestion] = useState(quesArr[0]);
-
-  // steps to get Question Bank and show the questions .. randomly 
-  // first get an array of all ques using the ''socket.emit(get-questions)' on method' 
-  // randomize the questions array
-  // show the questions from randomized array with their index like 0,1,2,3... 
-  // this randomized array will be different for each player but the questions will be the same like sequence of ques they get will be diff
-
-
-  // 
-  // socket.on('get-questions',(questions)=>{
-
-  // })
-
 
   const [selected, setSelected] = useState(null);
   const [timer, setTimer] = useState(10); // countdown seconds
   const [correct, setCorrect] = useState(0);
   const [wrong,setWrong] = useState(0)
 
+
+
   useEffect(() => {
     if (!roomCode || !playerName) {
       navigate('/');
     }
+    fetch("https://quizar.onrender.com/health").then(() => console.log("🟢 Backend is up!")).catch(() => alert("🔴 Server is down. Try again later."));
+
   }, [roomCode, playerName, navigate]);
 
   
